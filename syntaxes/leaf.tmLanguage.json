@@ -1,0 +1,405 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+
+	"name": "Leaf",
+	"scopeName": "source.leaf",
+
+	"patterns": [
+        {
+            "include": "#block"
+        },
+        {
+            "include": "#content"
+        }
+	],
+
+	"repository": {
+        
+        "comments": {
+            "patterns": [
+                {
+                    "name": "comment.line.double-slash",
+                    "begin": "\/\/",
+                    "end": "$"
+                }
+            ]
+        },
+        "package": {
+            "patterns": [
+                {
+                    "name": "entity.name.type",
+                    "match": "^[ \\t]*#\\s*([\\w\\d\\.\\_\\-]+)[^\\S\\r\\n]*[=:]?[^\\S\\r\\n]*(.*?)$",
+                    "captures": {
+                        "2": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#comments"
+                                },
+                                {
+                                    "include": "#textTags"
+                                },
+                                {
+                                    "include": "#expressionList"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "textTags": {
+            "patterns": [
+                {
+                    "include": "text.html.basic"
+                },
+                {
+                    "name": "meta.inlineReplace",
+                    "match": "\\{[^\\S\\r\\n]*(\\$)[^\\S\\r\\n]*(.*?)[^\\S\\r\\n]*\\}",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator"
+                        },
+                        "2": {
+                            "name": "variable.language",
+                            "patterns": [
+                                {
+                                    "include": "#constant"
+                                },
+                                {
+                                    "include": "#invocation"
+                                },
+                                {
+                                    "include": "#variableName"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "meta.textTag",
+                    "match": "\\{[^\\S\\r\\n]*\\/?[^\\S\\r\\n]*([\\w\\d#@\\$\\-\\_\\.]+)[^\\S\\r\\n]*[=:]?[^\\S\\r\\n]*(.*?)[^\\S\\r\\n]*\/?[^\\S\\r\\n]*\\}",
+                    "captures": {
+                        "1": {
+                            "name": "variable.language",
+                            "patterns": [
+                                {
+                                    "name": "support.character",
+                                    "match": "@(\\S*)"
+                                },
+                                {
+                                    "name": "support.tag",
+                                    "match": "#(\\S*)"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#parameterList"
+                                },
+                                {
+                                    "name": "support.tag",
+                                    "match": "#(\\S*)"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "block": {
+            "patterns": [
+                {
+                    "name": "meta.function",
+                    "begin": "^[ \\t]*::",
+                    "end": "(?=^[ \\t]*::)",
+                    "contentName": "source.leaf",
+                    
+                    "patterns": [
+                        {
+                            "name": "entity.name.function",
+                            "match": "(?<=::)\\s*[\\w\\.\\_\\-][\\w\\d\\.\\_\\-]*"
+                        },
+                        {
+                            "name": "entity.name.tag",
+                            "match": "^[ \\t]*@\\s*([\\w\\d\\.\\_\\-]+)[^\\S\\r\\n]*[=:]?[^\\S\\r\\n]*(.*?)$",
+                            "captures": {
+                                "2": {
+                                    "name": "variable.parameter",
+                                    "patterns": [
+                                        {
+                                            "include": "#comments"
+                                        },
+                                        {
+                                            "include": "#expressionList"
+                                        },
+                                        {
+                                            "include": "#textTags"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "include": "#textTags"
+                        },
+                        {
+                            "include": "#content"
+                        }
+                    ]
+                }
+            ]
+        },
+        "content": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#package"
+                },
+                {
+                    "include": "#instructions"
+                },
+                {
+                    "include": "#textTags"
+                }
+            ]
+        },
+        "plainText": {
+            "patterns": [
+                {
+                    "include": "#comments"
+                },
+                {
+                    "include": "#textTags"
+                }
+            ]
+        },
+        "instructions": {
+            "patterns": [
+                {
+                    "name": "meta.macroCall",
+                    "match": "^[ \\t]*\\$[ \\t]*([\\w\\d\\.\\_\\-]+)[ \\t]*\\((.*)\\)$",
+                    "captures": {
+                        "1": {
+                            "name": "support.function"
+                        },
+                        "2": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#comments"
+                                },
+                                {
+                                    "include": "#expressionList"
+                                },
+                                {
+                                    "include": "#textTags"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "meta.instruction",
+                    "match": "^[ \\t]*\\$[ \\t]*(if|elseif|else|endif|while|endwhile|break|continue|choice|choose|data|answer|branch|call|fork|goto|join|loop|return|set|start|stop|while|yield)\\s*([^;]*)(;\\s*(.+))?$",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.control"
+                        },
+                        "2": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#comments"
+                                },
+                                {
+                                    "include": "#expressionList"
+                                }
+                            ]
+                        },
+                        "4": {
+                            "name": "source.leaf",
+                            "patterns": [
+                                {
+                                    "include": "#plainText"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "expressionList": {
+            "patterns": [
+                {
+                    "include": "#expression"
+                },
+                {
+                    "include": "#comma"
+                }
+            ]
+        },
+        "expression": {
+            "patterns": [
+                {
+                    "include": "#operator"
+                },
+                {
+                    "include": "#constant"
+                },
+                {
+                    "include": "#invocation"
+                }
+            ]
+        },
+        "parameterList": {
+            "patterns": [
+                {
+                    "include": "#parameter"
+                },
+                {
+                    "include": "#comma"
+                }
+            ]
+        },
+        "parameter": {
+            "patterns": [
+                {
+                    "include": "#constant"
+                },
+                {
+                    "name": "meta.inlineParameter",
+                    "match": "(\\$)(.+)",
+                    "captures": {
+                        "1": {
+                            "name": "keyword.operator"
+                        },
+                        "2": {
+                            "patterns": [
+                                {
+                                    "include": "#constant"
+                                },
+                                {
+                                    "include": "#invocation"
+                                },
+                                {
+                                    "include": "#variableName"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "constant": {
+            "patterns": [
+                {
+                    "include": "#string"
+                },
+                {
+                    "name": "constant.language",
+                    "match": "(true|false|null)"
+                },
+                {
+                    "name": "constant.numeric",
+                    "match": "([\\+\\-]?\\b\\d+(?:\\.\\d+)?\\b)"
+                }
+            ]
+        },
+        "invocation": {
+            "patterns": [
+                {
+                    "match": "(?:(\\$?.+)?(->))?([\\w\\d\\.\\_\\-]+)[ \\t]*\\((.*)\\)",
+                    "captures": {
+                        "1": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#builtInIdentifier"
+                                },
+                                {
+                                    "include": "#parameter"
+                                }
+                            ]
+                        },
+                        "2": {
+                            "name": "keyword.operator"
+                        },
+                        "3": {
+                            "name": "support.function"
+                        },
+                        "4": {
+                            "name": "variable.parameter",
+                            "patterns": [
+                                {
+                                    "include": "#parameterList"
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        "variableName": {
+            "patterns": [
+                {
+                    "name": "entity.name.variable",
+                    "match": "([\\w\\d\\.\\_\\-]+):\\b[\\w\\d\\.\\_\\-]+\\b(?!\\s*\\()",
+                    "captures": {
+                        "1": {
+                            "patterns": [
+                                {
+                                    "include": "#builtInIdentifier"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "entity.name.variable",
+                    "match": "(?<![\\w\\d\\.\\_\\-]):\\b[\\w\\d\\.\\_\\-]+\\b(?!:?\\s*\\()"
+                },
+                {
+                    "name": "entity.name.variable",
+                    "match": "(?<![\\w\\d\\.\\_\\-])\\b[\\w\\d\\.\\_\\-]+\\b(?!:?\\s*\\()"
+                }
+            ]
+        },
+        "operator": {
+            "patterns": [
+                {
+                    "name": "keyword.operator",
+                    "match": "(==|=|!=|!|>=|>|<=|<|\\+|\\-|\\*|\\/)"
+                }
+            ]
+        },
+        "string": {
+            "patterns": [
+                {
+                    "name": "string.quoted",
+                    "match": "\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""
+                }
+            ]
+        },
+        "builtInIdentifier": {
+            "patterns": [
+                {
+                    "name": "support.class",
+                    "match": "(this|thread|local)"
+                }
+            ]
+        },
+        "comma": {
+            "patterns": [
+                {
+                    "name": "punctuation.separator.comma",
+                    "match": ","
+                }
+            ]
+        }
+	}
+}

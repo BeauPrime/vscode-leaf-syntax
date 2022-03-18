@@ -1,0 +1,33 @@
+{
+    "name": "vscode-leaf-syntax",
+    "displayName": "Leaf Syntax",
+    "description": "Syntax highlighting support for the Leaf scripting language",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.65.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/BeauPrime/vscode-leaf-syntax.git"
+    },
+    "contributes": {
+        "languages": [
+            {
+                "id": "leaf",
+                "aliases": ["Leaf", "leaf"],
+                "extensions": [".leaf"],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "leaf",
+                "scopeName": "source.leaf",
+                "path": "./syntaxes/leaf.tmLanguage.json"
+            }
+        ]
+    }
+}
